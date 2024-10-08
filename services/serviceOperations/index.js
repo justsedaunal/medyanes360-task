@@ -30,4 +30,17 @@ export async function deleteDataByAny(tableName, where) {
   }
 }
 
-export default { createNewData, getAllData, deleteDataByAny };
+// UPDATE
+export async function updateDataByAny(tableName, where, newData) {
+  try {
+    const data = await prisma[tableName].update({
+      where: where,
+      data: newData,
+    });
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+export default { createNewData, getAllData, deleteDataByAny ,updateDataByAny };

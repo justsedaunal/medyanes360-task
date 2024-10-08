@@ -1,9 +1,32 @@
 "use client";
 
-import { deleteAPI } from "@/services/fetchApi";
-import React from "react";
+import { deleteAPI ,putAPI} from "@/services/fetchApi";
+import React , { useState } from "react";
 
 const TodoListItem = (props) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [todoDescription, setTodoDescription] = useState(props.todo.todoDescription);
+
+  const editHandler = () => {
+    setIsEditing(true);
+  };
+
+  const saveHandler = async () => {
+    try {
+      const data = await putAPI(`/todos/updateTodo`, { id: props.todo.id, todoDescription });
+      alert(data.message || "Todo updated successfully");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  };
+
+  const cancelHandler = () => {
+    setIsEditing(false);
+    setTodoDescription(props.todo.todoDescription);
+  };
+
+
   const deleteHandler = () => {
     const req = deleteAPI(`/todos/deleteTodo?id=${props.todo.id}`);
     req
@@ -12,30 +35,39 @@ const TodoListItem = (props) => {
   };
 
   return (
-    <ul class="divide-y divide-gray-200 px-4">
-      <li class="py-4">
-        <div class="flex items-center justify-between">
-          <label for="todo1" class="ml-3 block text-gray-900">
-            <div class="flex">
-              <span class="text-lg font-medium">
+    <ul className="divide-y divide-gray-200 px-4">
+      <li className="py-4">
+        <div className="flex items-center justify-between">
+          {!isEditing ? (
+            <>
+              <span className="text-lg font-medium">
                 {props.todo.todoDescription}
               </span>
+              <div className="flex justify-between items-center gap-3">
+                <button onClick={editHandler} className="font-medium text-indigo-600 hover:text-indigo-800">
+                  Edit
+                </button>
+                <button onClick={deleteHandler} className="font-medium text-red-600 hover:text-red-800">
+                  Delete
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={todoDescription}
+                onChange={(e) => setTodoDescription(e.target.value)}
+                className="border p-1 rounded"
+              />
+              <button onClick={saveHandler} className="font-medium text-green-600 hover:text-green-800">
+                Save
+              </button>
+              <button onClick={cancelHandler} className="font-medium text-gray-600 hover:text-gray-800">
+                Cancel
+              </button>
             </div>
-          </label>
-          <div class="flex justify-between items-center gap-3">
-            <a
-              href="#"
-              class="font-medium text-indigo-600 hover:text-indigo-800"
-            >
-              Edit
-            </a>
-            <button
-              onClick={deleteHandler}
-              class="font-medium text-red-600 hover:text-red-800"
-            >
-              Delete
-            </button>
-          </div>
+          )}
         </div>
       </li>
     </ul>
