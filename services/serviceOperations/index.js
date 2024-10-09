@@ -43,4 +43,4 @@ export async function updateDataByAny(tableName, where, newData) {
   }
 }
 
-export default { createNewData, getAllData, deleteDataByAny ,updateDataByAny };
+export default { createNewData, getAllData, deleteDataByAny, updateDataByAny };

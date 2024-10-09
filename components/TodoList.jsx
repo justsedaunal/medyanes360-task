@@ -13,7 +13,7 @@ const TodoList = () => {
   });
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
+    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
       {todos.map((todo) => (
         <TodoListItem todo={todo} />
       ))}{" "}
