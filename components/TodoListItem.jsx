@@ -1,11 +1,11 @@
 "use client";
 
-import { deleteAPI ,putAPI} from "@/services/fetchApi";
-import React , { useState } from "react";
+import { deleteAPI, putAPI } from "@/services/fetchApi";
+import React, { useState } from "react";
 
-const TodoListItem = (props) => {
+const TodoListItem = ({ todo, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [todoDescription, setTodoDescription] = useState(props.todo.todoDescription);
+  const [todoDescription, setTodoDescription] = useState(todo.todoDescription);
 
   const editHandler = () => {
     setIsEditing(true);
@@ -13,9 +13,10 @@ const TodoListItem = (props) => {
 
   const saveHandler = async () => {
     try {
-      const data = await putAPI(`/todos/updateTodo`, { id: props.todo.id, todoDescription });
+      const data = await putAPI(`/todos/updateTodo`, { id: todo.id, todoDescription });
       alert(data.message || "Todo updated successfully");
       setIsEditing(false);
+      onUpdate(); // TodoList bileşenini bilgilendir
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -23,15 +24,17 @@ const TodoListItem = (props) => {
 
   const cancelHandler = () => {
     setIsEditing(false);
-    setTodoDescription(props.todo.todoDescription);
+    setTodoDescription(todo.todoDescription);
   };
 
-
-  const deleteHandler = () => {
-    const req = deleteAPI(`/todos/deleteTodo?id=${props.todo.id}`);
-    req
-      .then((res) => alert(res.message))
-      .catch((er) => console.error("Hata oluştu: " + er));
+  const deleteHandler = async () => {
+    try {
+      const res = await deleteAPI(`/todos/deleteTodo?id=${todo.id}`);
+      alert(res.message);
+      onDelete(); // TodoList bileşenini bilgilendir
+    } catch (er) {
+      console.error("Hata oluştu: " + er);
+    }
   };
 
   return (
@@ -41,7 +44,7 @@ const TodoListItem = (props) => {
           {!isEditing ? (
             <>
               <span className="text-lg font-medium">
-                {props.todo.todoDescription}
+                {todo.todoDescription}
               </span>
               <div className="flex justify-between items-center gap-3">
                 <button onClick={editHandler} className="font-medium text-indigo-600 hover:text-indigo-800">
