@@ -2,4 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-html {background: darkslategray;}
+html {
+    background-color: rgb(13 148 136);
+}
+
+@layer utilities {
+  @keyframes pulse-scale {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  .animate-pulse-scale {
+    @apply animate-[pulse-scale_1.5s_ease-in-out_infinite];
+  }
+}
