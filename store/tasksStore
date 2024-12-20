@@ -1,0 +1,30 @@
+import { create } from "zustand";
+import { getAPI, postAPI } from "../services/fetchApi";
+
+export const useTasksStore = create((set, get) => ({
+  tasks: [],
+  isLoading: false,
+  readTasks: async () => {
+    set({ isLoading: true }); // Yükleme başlatılıyor
+    try {
+      const response = await getAPI("/todos/getTodos");
+      console.log("API Response:", response);
+      set({ tasks: response }); // Tasks state'i güncelleniyor
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    } finally {
+      set({ isLoading: false }); // Yükleme tamamlandı
+    }
+  },
+
+  createTask: async (newTask) => {
+    try {
+      const res = await postAPI("/tasks/postTodos", newTask);
+      set((state) => ({ tasks: [...state.tasks, res.data] })); // API'den gelen veri eklenir
+      return res;
+    } catch (error) {
+      console.error("Task creation failed: ", error);
+      throw error;
+    }
+  },
+}));

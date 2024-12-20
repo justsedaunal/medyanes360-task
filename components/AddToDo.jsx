@@ -2,9 +2,10 @@
 
 import { React, useState } from "react";
 import { postAPI } from "@/services/fetchApi";
-
+import { useTasksStore } from "../store/tasksStore";
 const AddToDo = ({ onNewTodo }) => {
   const [todoDescription, setTodoDescription] = useState("");
+  const createTask = useTasksStore((state) => state.createTask);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -14,11 +15,14 @@ const AddToDo = ({ onNewTodo }) => {
       return;
     }
 
+    const newTask = {
+      todoDescription,
+    };
+
     try {
-      const res = await postAPI("/todos/postTodo", { todoDescription });
+      const res = await createTask(newTask);
       setTodoDescription("");
-      alert(res.message);
-      onNewTodo(); // Yeni todo eklendiğinde parent component'i bilgilendir
+      alert(res.message || "Görev başarıyla eklendi!");
     } catch (error) {
       console.error("Hata oluştu: " + error);
     }
@@ -32,7 +36,10 @@ const AddToDo = ({ onNewTodo }) => {
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
-      <form className="w-full max-w-sm mx-auto px-4 py-2" onSubmit={submitHandler}>
+      <form
+        className="w-full max-w-sm mx-auto px-4 py-2"
+        onSubmit={submitHandler}
+      >
         <div className="flex items-center border-b-2 border-teal-500 py-2">
           <input
             className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
